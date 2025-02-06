@@ -120,17 +120,19 @@ jobs:
           name: build-audit-log
           path: build_audit.log
 
-
   security_snyk:
     name: Dynamic Application Security Testing (DAST)
-    needs: CodeAnalyze
+    needs: dockertest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Authenticate Snyk
-        run: echo $SNYK_TOKEN | snyk auth
+        run: snyk auth $SNYK_TOKEN
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -142,5 +144,5 @@ jobs:
         with:
           image: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           args: test --severity-threshold=high
-          
+                  
 # -----------------------------------------------------------
