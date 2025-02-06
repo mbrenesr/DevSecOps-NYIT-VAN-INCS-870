@@ -121,26 +121,26 @@ jobs:
           path: build_audit.log
 
 
-security_snyk:
-  name: Dynamic Application Security Testing (DAST)
-  needs: CodeAnalyze
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  security_snyk:
+    name: Dynamic Application Security Testing (DAST)
+    needs: CodeAnalyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Authenticate Snyk
-      run: echo $SNYK_TOKEN | snyk auth
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Authenticate Snyk
+        run: echo $SNYK_TOKEN | snyk auth
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/docker@0.3.0
-      continue-on-error: true
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        args: test --severity-threshold=high
-        
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/docker@0.3.0
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          args: test --severity-threshold=high
+          
 # -----------------------------------------------------------
